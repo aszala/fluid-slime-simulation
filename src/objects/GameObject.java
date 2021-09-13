@@ -2,51 +2,63 @@ package objects;
 
 import java.awt.Color;
 
+import util.Vector2;
+
 public class GameObject {
     
-    private float x, y;
+    private Vector2 location;
     private int color = 255;
 
     private double angle;
 
-    public GameObject() { }
+    public GameObject() {
+        this.location = new Vector2();
+    }
 
     public void move(float deltaX, float deltaY) {
-        this.x += deltaX;
-        this.y += deltaY;
+        location.x += deltaX;
+        location.y += deltaY;
     }
 
     public void setLocation(float x, float y) {
-        setX(x);
-        setY(y);
+        location.x = x;
+        location.y = y;
+    }
+
+    public Vector2 getLocation() {
+        return location;
     }
 
     public float predictX(float deltaX) {
-        return this.x + deltaX;
+        return location.x + deltaX;
     }
 
     public float predictY(float deltaY) {
-        return this.y + deltaY;
+        return location.y + deltaY;
     }
 
     public float getX() {
-        return x;
+        return location.x;
     }
 
     public void setX(float x) {
-        this.x = x;
+        location.x = x;
     }
 
     public float getY() {
-        return y;
+        return location.y;
     }
 
     public void setY(float y) {
-        this.y = y;
+        location.y = y;
     }
 
     public Color getColor() {
         return new Color(color, color, color);
+    }
+
+    public int getRawColor() {
+        return color;
     }
 
     public void setColor(int color) {
