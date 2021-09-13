@@ -29,7 +29,7 @@ public class Main extends JFrame {
 
         gui.getContentPane().add(renderer);
 
-        for (int i=0;i<1;i++) {
+        for (int i=0;i<100;i++) {
             Renderer.spawnNewAgent(Main.WIDTH/2, Main.HEIGHT/2);
         }
 

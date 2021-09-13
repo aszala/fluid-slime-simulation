@@ -39,24 +39,26 @@ public class Renderer extends JPanel {
             g2d.draw(new Ellipse2D.Float(agent.getX(), agent.getY(), 2.0f, 2.0f));
 
 
-            double angle = agent.getAngle();
+            // double angle = agent.getAngle();
             
-            double leftAngle = angle - Agent.SENSOR_ANGLE;
-            double rightAngle = angle + Agent.SENSOR_ANGLE;
+            // double rightAngle = angle + Agent.SENSOR_ANGLE;
+            // double leftAngle = angle - Agent.SENSOR_ANGLE;
 
-            float deltaX = (float) (Math.cos(angle) * Agent.SPEED);
-            float deltaY = (float) -(Math.sin(angle) * Agent.SPEED);
+            // Point front = new Vector2(agent.predictX((float) (Math.sin(angle) * Agent.SENSOR_DISTANCE)),
+			// 							agent.predictY((float) -(Math.cos(angle) * Agent.SENSOR_DISTANCE))).asPoint();
 
-            Point front = new Vector2(agent.predictX((float) (Math.cos(angle) * Agent.SPEED)), agent.predictY((float) (Math.sin(angle) * Agent.SPEED))).asPoint();
-            Point left = new Vector2(agent.predictX((float) (Math.cos(leftAngle) * Agent.SPEED)), agent.predictY((float) (Math.sin(leftAngle) * Agent.SPEED))).asPoint();
-            Point right = new Vector2(agent.predictX((float) (Math.cos(rightAngle) * Agent.SPEED)), agent.predictY((float) (Math.sin(rightAngle) * Agent.SPEED))).asPoint();
+            // Point right = new Vector2(agent.predictX((float) (Math.sin(leftAngle) * Agent.SENSOR_DISTANCE)),
+			// 							agent.predictY((float) -(Math.cos(leftAngle) * Agent.SENSOR_DISTANCE))).asPoint();
 
-            g2d.setColor(Color.red);
-            g2d.fillOval(front.x, front.y, 2, 2);
-            g2d.setColor(Color.green);
-            g2d.fillOval(left.x, left.y, 2, 2);
-            g2d.setColor(Color.yellow);
-            g2d.fillOval(right.x, right.y, 2, 2);
+            // Point left = new Vector2(agent.predictX((float) (Math.sin(rightAngle) * Agent.SENSOR_DISTANCE)),
+			// 						agent.predictY((float) -(Math.cos(rightAngle) * Agent.SENSOR_DISTANCE))).asPoint();
+
+            // g2d.setColor(Color.red);
+            // g2d.fillOval(front.x, front.y, 2, 2);
+            // g2d.setColor(Color.green);
+            // g2d.fillOval(left.x, left.y, 2, 2);
+            // g2d.setColor(Color.yellow);
+            // g2d.fillOval(right.x, right.y, 2, 2);
 
             List<Trail> trailMap = agent.getTrailMap();
 
@@ -83,8 +85,8 @@ public class Renderer extends JPanel {
         for (Agent agent : agents) {
             double angle = agent.getAngle();
 
-            float deltaX = (float) (Math.cos(angle) * Agent.SPEED);
-            float deltaY = (float) -(Math.sin(angle) * Agent.SPEED);
+            float deltaX = (float) (Math.sin(angle) * Agent.SPEED);
+            float deltaY = (float) -(Math.cos(angle) * Agent.SPEED);
 
             float newX = agent.predictX(deltaX);
             float newY = agent.predictY(deltaY);
@@ -93,24 +95,52 @@ public class Renderer extends JPanel {
                 newX = Math.min(Main.WIDTH-0.01f, Math.max(0, newX));
                 newY = Math.min(Main.HEIGHT-0.01f, Math.max(0, newY));
 
-                agent.setAngle(agent.getAngle() + Math.toRadians(45));
-                //agent.setAngle(Agent.generateRandomAngle());
+                //agent.setAngle(agent.getAngle() + Math.toRadians(45));
+                agent.setAngle(Agent.generateRandomAngle());
             }
+
+			//agent.setAngle(agent.getAngle() + Math.toRadians(5));
 
             agent.setLocation(newX, newY);
 
-            double leftAngle = angle - Agent.SENSOR_ANGLE;
             double rightAngle = angle + Agent.SENSOR_ANGLE;
+            double leftAngle = angle - Agent.SENSOR_ANGLE;
 
-            Point front = new Vector2(agent.predictX((float) (Math.cos(angle) * Agent.SPEED)), agent.predictY((float) (Math.sin(angle) * Agent.SPEED))).asPoint();
-            Point left = new Vector2(agent.predictX((float) (Math.cos(leftAngle) * Agent.SPEED)), agent.predictY((float) (Math.sin(leftAngle) * Agent.SPEED))).asPoint();
-            Point right = new Vector2(agent.predictX((float) (Math.cos(rightAngle) * Agent.SPEED)), agent.predictY((float) (Math.sin(rightAngle) * Agent.SPEED))).asPoint();
+            Point front = new Vector2(agent.predictX((float) (Math.sin(angle) * Agent.SENSOR_DISTANCE)),
+										agent.predictY((float) -(Math.cos(angle) * Agent.SENSOR_DISTANCE))).asPoint();
+										
+            Point right = new Vector2(agent.predictX((float) (Math.sin(leftAngle) * Agent.SENSOR_DISTANCE)),
+										agent.predictY((float) -(Math.cos(leftAngle) * Agent.SENSOR_DISTANCE))).asPoint();
+
+            Point left = new Vector2(agent.predictX((float) (Math.sin(rightAngle) * Agent.SENSOR_DISTANCE)),
+									agent.predictY((float) -(Math.cos(rightAngle) * Agent.SENSOR_DISTANCE))).asPoint();
 
             int frontWeight = pixelMap.containsKey(front) ? pixelMap.get(front) : 0;
             int leftWeight = pixelMap.containsKey(left) ? pixelMap.get(left) : 0;
             int rightWeight = pixelMap.containsKey(right) ? pixelMap.get(right) : 0;
 
-            double randomSteer = Agent.generateRandomAngle();
+            double randomSteer = 0;//Agent.generateRandomAngle();
+
+			//System.out.println("Old Angle: " + old);
+
+			if (frontWeight != 0) {
+				double newAngle = Math.atan2(front.y - newY, front.x - newX);
+				newAngle += Math.PI/2;
+				agent.setAngle(newAngle);
+			} else if (leftWeight != 0) {
+				double newAngle = Math.atan2(left.y - newY, left.x - newX);
+				newAngle += Math.PI/2;
+				agent.setAngle(newAngle);
+			} else if (rightWeight != 0) {
+				double newAngle = Math.atan2(right.y - newY, right.x - newX);
+				newAngle += Math.PI/2;
+				agent.setAngle(newAngle);
+			}
+			
+			// if (Math.toDegrees(agent.getAngle()) != old) {
+			// 	System.out.println("Old Angle: " + old);
+			// 	System.out.println("New Angle: " + Math.toDegrees(agent.getAngle()));
+			// }
 
             if (frontWeight > leftWeight && frontWeight > rightWeight) {
                 agent.setAngle(agent.getAngle() + 0.0);

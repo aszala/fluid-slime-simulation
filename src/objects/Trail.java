@@ -2,7 +2,7 @@ package objects;
 
 public class Trail extends GameObject {
     
-    public static final float DEATH_RATE = 10.0f;
+    public static final float DEATH_RATE = 5.0f;
 
     private float lifeSpan = 255;
 

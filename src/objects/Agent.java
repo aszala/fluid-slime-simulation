@@ -5,8 +5,9 @@ import java.util.List;
 
 public class Agent extends GameObject {
     
-    public static final float SPEED = 5.0f;
+    public static final float SPEED = 2.0f;
     public static final Double SENSOR_ANGLE = -0.610865; // -35 as radian
+	public static final float SENSOR_DISTANCE = 15.0f;
 
     private List<Trail> trailMap = new ArrayList<>();
 
