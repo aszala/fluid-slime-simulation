@@ -1,5 +1,7 @@
 package objects;
 
+import java.awt.Color;
+
 public class GameObject {
     
     private float x, y;
@@ -14,11 +16,24 @@ public class GameObject {
         this.y += deltaY;
     }
 
+    public void setLocation(float x, float y) {
+        setX(x);
+        setY(y);
+    }
+
+    public float predictX(float deltaX) {
+        return this.x + deltaX;
+    }
+
+    public float predictY(float deltaY) {
+        return this.y + deltaY;
+    }
+
     public float getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -30,8 +45,8 @@ public class GameObject {
         this.y = y;
     }
 
-    public int getColor() {
-        return color;
+    public Color getColor() {
+        return new Color(color, color, color);
     }
 
     public void setColor(int color) {
