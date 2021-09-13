@@ -3,7 +3,6 @@ package main;
 import java.awt.Color;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Main extends JFrame {
 
@@ -29,6 +28,10 @@ public class Main extends JFrame {
         Renderer renderer = new Renderer();
 
         gui.getContentPane().add(renderer);
+
+        for (int i=0;i<1000;i++) {
+            Renderer.spawnNewAgent(Main.WIDTH/2, Main.HEIGHT/2);
+        }
 
         Thread renderLoop = new Thread(new Runnable(){
             @Override
