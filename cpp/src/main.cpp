@@ -15,7 +15,7 @@ int main(void) {
         return -1;
     }
     
-    window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "Fluid Slime Simulation", NULL, NULL );
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fluid Slime Simulation", NULL, NULL);
     
     if (!window) {
         glfwTerminate();
