@@ -6,7 +6,7 @@ import java.util.List;
 public class Agent extends GameObject {
     
     public static final float SPEED = 2.0f;
-    public static final Double SENSOR_ANGLE = -0.610865; // -35 as radian
+    public static final Double SENSOR_ANGLE = -0.785398; // -35 as radian
 	public static final float SENSOR_DISTANCE = 15.0f;
 
     private List<Trail> trailMap = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Agent extends GameObject {
     }
 
     public static double generateRandomAngle() {
-        return Math.toRadians(0.0f + Math.random() * (360.0f - 0.0f));
+        return Math.toRadians(-180.0f + Math.random() * (360.0f - 0.0f));
     }
 
     public List<Trail> getTrailMap() {

@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 public class Main extends JFrame {
 
     private static final String TITLE = "Fluid Slime Simulation";
-    public static final int WIDTH = 1280, HEIGHT = 720;
+    public static final int WIDTH = 500, HEIGHT = 500;
 
     public static final Color BACKGROUND_COLOR = Color.BLACK;
 
@@ -29,7 +29,7 @@ public class Main extends JFrame {
 
         gui.getContentPane().add(renderer);
 
-        for (int i=0;i<100;i++) {
+        for (int i=0;i<1000;i++) {
             Renderer.spawnNewAgent(Main.WIDTH/2, Main.HEIGHT/2);
         }
 
@@ -40,11 +40,11 @@ public class Main extends JFrame {
                     renderer.repaint();
                     renderer.update();
 
-                    try {    
-                        Thread.sleep(1000/60);
-                    } catch (Exception e) {
-                        System.err.println("Thread error");
-                    }
+                    // try {    
+                    //     Thread.sleep(1000/60);
+                    // } catch (Exception e) {
+                    //     System.err.println("Thread error");
+                    // }
                 }
             }
         });
