@@ -26,8 +26,7 @@ void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfS
     
     GLfloat allCircleVertices[( numberOfVertices ) * 3];
     
-    for ( int i = 0; i < numberOfVertices; i++ )
-    {
+    for ( int i = 0; i < numberOfVertices; i++ ) {
         allCircleVertices[i * 3] = circleVerticesX[i];
         allCircleVertices[( i * 3 ) + 1] = circleVerticesY[i];
         allCircleVertices[( i * 3 ) + 2] = circleVerticesZ[i];
@@ -37,4 +36,18 @@ void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfS
     glVertexPointer(3, GL_FLOAT, 0, allCircleVertices);
     glDrawArrays(GL_TRIANGLE_FAN, 0, numberOfVertices);
     glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void drawRectangle(GLfloat x, GLfloat y, GLfloat s) {
+    glBegin(GL_QUADS);
+    // glColor4f(((rgba>>24)&0xff)/255.0f,
+    //       ((rgba>>16)&0xff)/255.0f, 
+    //       ((rgba>>8)&0xff)/255.0f,
+    //       (rgba&0xff)/255.0f);
+    glVertex3f(x,y,0);
+    glVertex3f(x+s,y,0);
+    glVertex3f(x+s,y+s,0);
+    glVertex3f(x,y+s,0);
+    glEnd();
+    //glColor4f(1, 1, 1, 1);
 }
