@@ -14,12 +14,10 @@
 
 #include <objects/gameobject.h>
 #include <objects/agent.h>
+#include <shaders/shader.h>
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-
-float sinLookup[360];
-float cosLookup[360];
 
 void update(Agent* agent) {
     GLfloat angle = agent->getAngle();
@@ -68,10 +66,49 @@ int main(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    //Shader shader("../shaders/compute.es");
+
+    // const char *source;
+    // int length;
+
+    // std::string integrate_source =
+    //     "#version 430\n"
+    //     "layout(local_size_x=256) in;\n"
+
+    //     "layout(location = 0) uniform float dt;\n"
+    //     "layout(std430, binding=0) buffer pblock { vec4 positions[]; };\n"
+    //     "layout(std430, binding=1) buffer vblock { vec4 velocities[]; };\n"
+
+    //     "void main() {\n"
+    //     "   int index = int(gl_GlobalInvocationID);\n"
+    //     "   vec4 position = positions[index];\n"
+    //     "   vec4 velocity = velocities[index];\n"
+    //     "   position.xyz += dt*velocity.xyz;\n"
+    //     "   positions[index] = position;\n"
+    //     "}\n";
+
+
+    // GLenum err = glewInit();
+
+    // GLuint integrate_program, integrate_shader;
+
+    // integrate_shader = glCreateShader(GL_COMPUTE_SHADER);
+    // source = integrate_source.c_str();
+    // length = integrate_source.size();
+    // glShaderSource(integrate_shader, 1, &source, &length);
+    // glCompileShader(integrate_shader);
+
+    // integrate_program = glCreateProgram();
+
+    // glAttachShader(integrate_program, integrate_shader);
+
+    // glLinkProgram(integrate_program);
+    
+
+
+
 
     unsigned int i = 0;
-
-    /// Start
 
     std::vector<Agent*> agents;
     
