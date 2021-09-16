@@ -15,6 +15,7 @@
 #include <objects/gameobject.h>
 #include <objects/agent.h>
 #include <shaders/shader.h>
+#include <objects/trail.h>
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -36,11 +37,32 @@ void update(Agent* agent) {
     }
 
     agent->moveTo(newX, newY);
+
+    std::vector<Trail*>* trails = agent->getTrail();
+
+    unsigned int i=0;
+    for (i=0; i<trails->size(); i++) {
+        Trail* trail = (*trails)[i];
+        trail->update();
+
+        if (trail->getLifeSpan() < 5) {
+            trails->erase(trails->begin());
+        }
+    }
 }
 
 void draw(Agent* agent) {
     //drawCircle(agent->getX(), agent->getY(), 0, AGENT_WIDTH, 4);
-    drawRectangle(agent->getX(), agent->getY(), AGENT_WIDTH);
+    drawRectangle(agent->getX(), agent->getY(), AGENT_WIDTH, 255.0f);
+
+    std::vector<Trail*>* trails = agent->getTrail();
+
+    unsigned int i=0;
+    for (i=0; i<trails->size(); i++) {
+        Trail* trail = (*trails)[i];
+
+        drawRectangle(trail->getX(), trail->getY(), AGENT_WIDTH, trail->getLifeSpan());
+    }
 }
 
 int main(void) {
@@ -114,7 +136,7 @@ int main(void) {
     
     GLint sleepTime = 1000/60;
 
-    for (i=0;i<10000;i++) {
+    for (i=0;i<5000;i++) {
         Agent* agent = new Agent(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
         
         GLfloat angle = generateRandomAngle();
@@ -145,6 +167,13 @@ int main(void) {
     }
     
     for (i=0; i<agents.size(); i++) {
+        std::vector<Trail*>* trails = agents[i]->getTrail();
+
+        unsigned int j=0;
+        for (j=0; j<trails->size(); j++) {
+            delete (*trails)[j];
+        }
+
         delete agents[i];
     }
 

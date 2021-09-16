@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <objects/gameobject.h>
+#include <objects/trail.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -25,7 +26,7 @@ GLfloat generateRandomAngle() {
 
 class Agent : public GameObject {
     private:
-        int adwjkjdlk;
+        std::vector<Trail*> trail;
     public:
         Agent(GLfloat spawnX, GLfloat spawnY) {
             setLocation(spawnX, spawnY);
@@ -33,7 +34,14 @@ class Agent : public GameObject {
 
         void moveTo(GLfloat newX, GLfloat newY) {
             setLocation(newX, newY);
-            // Add trail map
+
+            Trail* t = new Trail(newX, newY);
+
+            this->trail.push_back(t);
+        }
+
+        std::vector<Trail*>* getTrail() {
+            return &trail;
         }
 
 };

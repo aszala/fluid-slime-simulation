@@ -6,6 +6,6 @@
 
 void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
 
-void drawRectangle(GLfloat x, GLfloat y, GLfloat s);
+void drawRectangle(GLfloat x, GLfloat y, GLfloat s, GLfloat color);
 
 #endif

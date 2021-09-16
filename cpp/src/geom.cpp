@@ -38,16 +38,13 @@ void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfS
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void drawRectangle(GLfloat x, GLfloat y, GLfloat s) {
+void drawRectangle(GLfloat x, GLfloat y, GLfloat s, GLfloat color) {
     glBegin(GL_QUADS);
-    // glColor4f(((rgba>>24)&0xff)/255.0f,
-    //       ((rgba>>16)&0xff)/255.0f, 
-    //       ((rgba>>8)&0xff)/255.0f,
-    //       (rgba&0xff)/255.0f);
+    glColor4f(color / 255.0f, color / 255.0f, color / 255.0f, 1.0f);
     glVertex3f(x,y,0);
     glVertex3f(x+s,y,0);
     glVertex3f(x+s,y+s,0);
     glVertex3f(x,y+s,0);
     glEnd();
-    //glColor4f(1, 1, 1, 1);
+    glColor4f(1, 1, 1, 1);
 }
