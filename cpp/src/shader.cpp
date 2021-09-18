@@ -1,78 +1,85 @@
+#include <iostream>
+#include <fstream>
 #include <shaders/shader.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+Shader::Shader() {}
 
-#include <fstream>
-#include <sstream>
-#include <iostream>
+Shader::~Shader() {
+	if (m_shader != 0) {
+		glDeleteShader(m_shader);
+	}
+}
 
-Shader::Shader(const char* path) {
-    std::string shaderCode;
-    std::ifstream shaderFile;
+bool Shader::InitFromFile(std::string filePath, GLenum shaderType) {
 
-    shaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-    try {
-        shaderFile.open(path);
-        std::stringstream shaderStream;
+	// std::ifstream file(filePath);
 
-        shaderStream << shaderFile.rdbuf();		
-        
-        shaderFile.close();
-        
-        shaderCode = shaderStream.str();
-    } catch(std::ifstream::failure e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	// if (!file.good()) 	{
+	// 	std::cout << "Can't read file: " << filePath << std::endl;
+	// 	return false;
+	// }
+
+	// file.seekg(0, std::ios::end);
+
+	// std::string shaderCode;
+	// shaderCode.resize((size_t)file.tellg());
+
+	// file.seekg(0, std::ios::beg);
+	// file.read(&shaderCode[0], shaderCode.size());
+
+	// file.close();
+
+	std::string content;
+    std::ifstream fileStream(filePath, std::ios::in);
+
+    if(!fileStream.is_open()) {
+        std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
+        return "";
     }
 
-    const GLchar* const shaderCodePtr = shaderCode.c_str();
-
-    GLint gComputeProgram = glCreateProgram();
-    GLuint mComputeShader = glCreateShader(GL_COMPUTE_SHADER);
-
-    glShaderSource(mComputeShader, 1, &shaderCodePtr, NULL);
-    glCompileShader(mComputeShader);
-
-    int rvalue;
-    glGetShaderiv(mComputeShader, GL_COMPILE_STATUS, &rvalue);
-
-    if (!rvalue) {
-
-        printf("Error: Compiler log:\n%s\n");
-
+    std::string line = "";
+    while(!fileStream.eof()) {
+        std::getline(fileStream, line);
+        content.append(line + "\n");
     }
 
-    glAttachShader(gComputeProgram, mComputeShader);
-    glLinkProgram(gComputeProgram);
+    fileStream.close();
 
-    glGetProgramiv(gComputeProgram, GL_LINK_STATUS, &rvalue);
-
-    if (!rvalue) {
-        printf("Error: Linker log:\n%s\n");
-    }
-
+	return InitFromString(content, shaderType, filePath);
 }
 
-void Shader::use() { 
-    glUseProgram(Shader::ID);
-} 
+bool Shader::InitFromString(std::string shaderCode, GLenum shaderType, std::string filePath) {
+	m_type = shaderType;
+	m_shader = glCreateShader(shaderType);
 
-unsigned int Shader::getID() {
-    return Shader::ID;
+	const char* shaderCodePointer = shaderCode.data();
+	int shaderCodeLength = shaderCode.size();
+
+	glShaderSource(m_shader, 1, &shaderCodePointer, &shaderCodeLength);
+	glCompileShader(m_shader);
+
+	GLint isCompiled;
+
+	glGetShaderiv(m_shader, GL_COMPILE_STATUS, &isCompiled);
+
+	if (!isCompiled) {
+		char infolog[1024];
+		glGetShaderInfoLog(m_shader, 1024, NULL, infolog);
+		std::cout << shaderCode << " Shader compile failed with error: " << std::endl << infolog << std::endl;
+
+		glDeleteShader(m_shader);
+		m_shader = 0;
+		return false;
+	} else {
+		return true;
+	}
 }
 
-void Shader::setBool(const std::string &name, bool value) const {        
-    glUniform1i(glGetUniformLocation(Shader::ID, name.c_str()), (int)value); 
+
+void Shader::AttachTo(GLuint program) {
+	if (m_shader != 0) {
+		glAttachShader(program, m_shader);
+	} else {
+		std::cout << "Failed to attach shader: Shader not initialized." << std::endl;
+	}
 }
-void Shader::setInt(const std::string &name, int value) const { 
-    glUniform1i(glGetUniformLocation(Shader::ID, name.c_str()), value); 
-}
-void Shader::setFloat(const std::string &name, float value) const { 
-    glUniform1f(glGetUniformLocation(Shader::ID, name.c_str()), value); 
-} 
-void Shader::setVec3(const std::string &name, float value1, float value2, float value3) const { 
-    glUniform3f(glGetUniformLocation(Shader::ID, name.c_str()), value1, value2, value3); 
-} 
-void Shader::setVec4(const std::string &name, float value1, float value2, float value3, float value4) const { 
-    glUniform4f(glGetUniformLocation(Shader::ID, name.c_str()), value1, value2, value3, value4); 
-} 

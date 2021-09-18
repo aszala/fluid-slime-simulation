@@ -35,14 +35,14 @@ class Agent : public GameObject {
         void moveTo(GLfloat newX, GLfloat newY) {
             setLocation(newX, newY);
 
-            Trail* t = new Trail(newX, newY);
+            // Trail* t = new Trail(newX, newY);
 
-            this->trail.push_back(t);
+            // this->trail.push_back(t);
         }
 
-        std::vector<Trail*>* getTrail() {
-            return &trail;
-        }
+        // std::vector<Trail*>* getTrail() {
+        //     return &trail;
+        // }
 
 };
 

@@ -1,23 +1,23 @@
 #ifndef SHADER_H
-#define SHADER_H
-  
+#define SHADER
+
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 #include <string>
-  
 
 class Shader {
+
+private:
+	GLuint m_shader;
+	GLenum m_type;
+
 public:
-    unsigned int ID;
-  
-    Shader(const char* path);
-    
-    void use();
-    
-    unsigned int getID();
-    void setBool(const std::string &name, bool value) const;  
-    void setInt(const std::string &name, int value) const;   
-    void setFloat(const std::string &name, float value) const;
-    void setVec3(const std::string &name, float value1, float value2, float value3) const;
-    void setVec4(const std::string &name, float value1, float value2, float value3, float value4) const;
+	Shader();
+	~Shader();
+
+	bool InitFromFile(std::string filePath, GLenum shaderType);
+	bool InitFromString(std::string shaderCode, GLenum shaderType, std::string filePath);
+	void AttachTo(GLuint program);
 };
-  
+
 #endif
