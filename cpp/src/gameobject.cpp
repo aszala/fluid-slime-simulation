@@ -1,47 +1,47 @@
 #include <objects/gameobject.h>
 
-GameObject::GameObject(GLfloat number, GLfloat inMax) {
-	vertices.push_back(
-			Vertex(
-				glm::vec4(mapScreenValuesFromNormalToGPU(SCREEN_WIDTH/2, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(SCREEN_HEIGHT/2, SCREEN_HEIGHT), 0, 1),
-				glm::vec4(.5, .5, .5, 1)
-				)
-			);
-	vertices.push_back(
-			Vertex(
-				glm::vec4(mapScreenValuesFromNormalToGPU(SCREEN_WIDTH/2 + WIDTH, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(SCREEN_HEIGHT/2, SCREEN_HEIGHT), 0, 1),
-				glm::vec4(.5, .5, .5, 1)
-				)
-			);
-	vertices.push_back(
-			Vertex(
-				glm::vec4(mapScreenValuesFromNormalToGPU(SCREEN_WIDTH/2, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(SCREEN_HEIGHT/2 + HEIGHT, SCREEN_HEIGHT), 0, 1),
-				glm::vec4(.5, .5, .5, 1)
-				)
-			);
-	vertices.push_back(
-			Vertex(
-				glm::vec4(mapScreenValuesFromNormalToGPU(SCREEN_WIDTH/2 + WIDTH, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(SCREEN_HEIGHT/2 + HEIGHT, SCREEN_HEIGHT), 0, 1),
-				glm::vec4(.5, .5, .5, 1)
-				)
-			);
+GameObject::GameObject(GLfloat x, GLfloat y) {
+	// vertices.push_back(
+	// 		Vertex(
+	// 			glm::vec4(mapScreenValuesFromNormalToGPU(x, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(y, SCREEN_HEIGHT), 0, 1),
+	// 			glm::vec4(.5, .5, .5, 1)
+	// 			)
+	// 		);
+	// vertices.push_back(
+	// 		Vertex(
+	// 			glm::vec4(mapScreenValuesFromNormalToGPU(x + WIDTH, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(y, SCREEN_HEIGHT), 0, 1),
+	// 			glm::vec4(.5, .5, .5, 1)
+	// 			)
+	// 		);
+	// vertices.push_back(
+	// 		Vertex(
+	// 			glm::vec4(mapScreenValuesFromNormalToGPU(x, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(y + HEIGHT, SCREEN_HEIGHT), 0, 1),
+	// 			glm::vec4(.5, .5, .5, 1)
+	// 			)
+	// 		);
+	// vertices.push_back(
+	// 		Vertex(
+	// 			glm::vec4(mapScreenValuesFromNormalToGPU(x + WIDTH, SCREEN_WIDTH), mapScreenValuesFromNormalToGPU(y + HEIGHT, SCREEN_HEIGHT), 0, 1),
+	// 			glm::vec4(.5, .5, .5, 1)
+	// 			)
+	// 		);
 
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-	indices.push_back(3);
-	indices.push_back(2);
-	indices.push_back(1);
+	// indices.push_back(0);
+	// indices.push_back(1);
+	// indices.push_back(2);
+	// indices.push_back(3);
+	// indices.push_back(2);
+	// indices.push_back(1);
 
-	glGenBuffers(1, &m_vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// glGenBuffers(1, &m_vertexBuffer);
+	// glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	// glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glGenBuffers(1, &m_indexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_indexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// glGenBuffers(1, &m_indexBuffer);
+	// glBindBuffer(GL_ARRAY_BUFFER, m_indexBuffer);
+	// glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+	// glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 GameObject::~GameObject() {

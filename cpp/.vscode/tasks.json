@@ -8,14 +8,14 @@
 			"args": [
 				"-g",
 				"-std=c++17",
-				"-I${fileDirname}\\..\\include",
-				"-L${fileDirname}\\..\\lib",
-				"${fileDirname}\\..\\src\\*.cpp",
+				"-I${workspaceFolder}\\include",
+				"-L${workspaceFolder}\\lib",
+				"${workspaceFolder}\\src\\*.cpp",
 				"-lglfw3dll",
                 "-lopengl32",
                 "-lglew32",
 				"-o",
-				"${fileDirname}\\..\\app.exe"
+				"${workspaceFolder}\\app.exe"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
