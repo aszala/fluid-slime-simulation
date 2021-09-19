@@ -12,7 +12,7 @@
 #include <shaders/shader.h>
 
 #define SLEEP_TIME 17
-#define AGENT_COUNT 10000
+#define AGENT_COUNT 100000
 
 void resizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -31,11 +31,14 @@ int main(void) {
 
 	Shader vertexShader;
 	vertexShader.InitFromFile("src/shaders/vertex.glsl", GL_VERTEX_SHADER);
+	Shader geometryShader;
+	geometryShader.InitFromFile("src/shaders/geometry.glsl", GL_GEOMETRY_SHADER);
 	Shader fragmentShader;
 	fragmentShader.InitFromFile("src/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	GLuint shaderProgram = glCreateProgram();
 
 	vertexShader.AttachTo(shaderProgram);
+    //geometryShader.AttachTo(shaderProgram);
 	fragmentShader.AttachTo(shaderProgram);
 	glLinkProgram(shaderProgram);
 
@@ -74,12 +77,12 @@ int main(void) {
 
     glGenBuffers(1, &m_allVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_allVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, allVertices.size() * sizeof(Vertex), &allVertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, allVertices.size() * sizeof(Vertex), &allVertices[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &m_allIndicesBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_allIndicesBuffer);
-	glBufferData(GL_ARRAY_BUFFER, allIndices.size() * sizeof(unsigned int), &allIndices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, allIndices.size() * sizeof(unsigned int), &allIndices[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     while (!glfwWindowShouldClose(window)) {
