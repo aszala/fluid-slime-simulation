@@ -1,18 +1,33 @@
 #version 430
 
-// uint hash(uint state) {
-//     state ^= 2747636419u;
-//     state *= 2654435769u;
-//     state ^= state >> 16;
-//     state *= 2654435769u;
-//     state ^= state >> 16;
-//     state *= 2654435769u;
-//     return state;
-// }
+uint hash(uint x) {
+    x += (x << 10u);
+    x ^= (x >>  6u);
+    x += (x <<  3u);
+    x ^= (x >> 11u);
+    x += (x << 15u);
+    return x;
+}
 
-// float scaleToRange01(uint state) {
-//     return float(state) / 4294967295.0;
-// }
+uint hash(uvec2 v) { return hash(v.x ^ hash(v.y)); }
+uint hash(uvec3 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z)); }
+uint hash(uvec4 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w)); }
+
+float floatConstruct(uint m) {
+    const uint ieeeMantissa = 0x007FFFFFu;
+    const uint ieeeOne = 0x3F800000u;
+
+    m &= ieeeMantissa;
+    m |= ieeeOne;
+
+    float f = uintBitsToFloat(m);
+    return f - 1.0;
+}
+
+float random(float x) { return floatConstruct(hash(floatBitsToUint(x))); }
+float random(vec2 v) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random(vec3 v) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random(vec4 v) { return floatConstruct(hash(floatBitsToUint(v))); }
 
 struct VertexData {
 	vec4 position;
@@ -29,9 +44,7 @@ layout(location = 0) uniform float in_dt;
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 float M_PI = 3.14159265358979323846;
-float speed = 0.1;
-
-vec4 simulationBounds = vec4(0, 0, 1280, 720);
+float speed = 1.6;
 
 void main() {
 	uint index = gl_GlobalInvocationID.x;
@@ -41,15 +54,11 @@ void main() {
 	vec2 delta = vec2(speed * sin(rotation), speed * -cos(rotation))*in_dt;
 	vec2 predicted = delta + outBuffer.data[index].position.xy;
 
-	// uint random = hash(uint(outBuffer.data[index].position.y * simulationBounds.z + outBuffer.data[index].position.x + hash(uint(index + in_dt) * 100000)));
+	if (predicted.x < -1 || predicted.x > 1 || predicted.y < -1 || predicted.y > 1) {
+		predicted = vec2(min(1, max(-1, predicted.x)), min(1, max(-1, predicted.y)));
 
-	// if (predicted.x < simulationBounds.x || predicted.x > simulationBounds.z || predicted.y < simulationBounds.y || predicted.y > simulationBounds.w) {
-	// 	//predicted = vec2(min(simulationBounds.z, max(0, predicted.x)), min(simulationBounds.w, max(0, predicted.y)));
-
-	// 	outBuffer.data[index].angle.x = scaleToRange01(random) * 2 * M_PI;
-	// }
+		outBuffer.data[index].angle.x += random(predicted) * M_PI * 2;
+	}
 
 	outBuffer.data[index].position.xy = predicted;
-	outBuffer.data[index].color += vec4(outBuffer.data[index].position.xy, 0, 1) * in_dt;
-	
 }

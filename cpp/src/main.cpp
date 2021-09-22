@@ -12,7 +12,7 @@
 #include <shaders/shader.h>
 
 #define SLEEP_TIME 17
-#define AGENT_COUNT 100000
+#define AGENT_COUNT 1000000
 
 void resizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -38,7 +38,7 @@ int main(void) {
 	GLuint shaderProgram = glCreateProgram();
 
 	vertexShader.AttachTo(shaderProgram);
-    //geometryShader.AttachTo(shaderProgram);
+    geometryShader.AttachTo(shaderProgram);
 	fragmentShader.AttachTo(shaderProgram);
 	glLinkProgram(shaderProgram);
 
@@ -51,7 +51,6 @@ int main(void) {
     unsigned int i = 0;
 
     std::vector<Vertex> allVertices;
-    std::vector<unsigned int> allIndices;
 
     GLfloat x = SCREEN_WIDTH / 2;
     GLfloat y = SCREEN_HEIGHT / 2;
@@ -60,30 +59,19 @@ int main(void) {
         GLfloat startAngle = generateRandomAngle();
 
         allVertices.push_back(makeVertex(x, y, startAngle));
-        allVertices.push_back(makeVertex(x + WIDTH, y, startAngle));
-        allVertices.push_back(makeVertex(x, y + HEIGHT, startAngle));
-        allVertices.push_back(makeVertex(x + WIDTH, y + HEIGHT, startAngle));
-
-        allIndices.push_back(0 + (i * 4));
-        allIndices.push_back(1 + (i * 4));
-        allIndices.push_back(2 + (i * 4));
-        allIndices.push_back(3 + (i * 4));
-        allIndices.push_back(2 + (i * 4));
-        allIndices.push_back(1 + (i * 4));
     }
 
-    GLuint m_allVertexBuffer;
-    GLuint m_allIndicesBuffer;
-
-    glGenBuffers(1, &m_allVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_allVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, allVertices.size() * sizeof(Vertex), &allVertices[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_allIndicesBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_allIndicesBuffer);
-	glBufferData(GL_ARRAY_BUFFER, allIndices.size() * sizeof(unsigned int), &allIndices[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    unsigned int VBO, VAO;
+    glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, allVertices.size() * sizeof(Vertex), &allVertices[0], GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(Vertex), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(Vertex), (void*)(2 * sizeof(Vertex)));
+    glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window)) {
         //auto start = std::chrono::high_resolution_clock::now();
@@ -91,34 +79,20 @@ int main(void) {
 		float dt = glfwGetTime();
         glfwSetTime(0);
 
+        glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
-		glClearColor(0.0, 0.0, 0.0, 0.0);
 
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_allVertexBuffer);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, VBO);
         glUseProgram(computeProgram);
         glUniform1f(0, dt);
         glDispatchCompute(allVertices.size(), 1, 1);
 
 		glUseProgram(shaderProgram);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_allVertexBuffer);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(float) * 4));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_allIndicesBuffer);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
-        glDrawElements(GL_TRIANGLES, allIndices.size(), GL_UNSIGNED_INT, (void*)0);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		glUseProgram(0);
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_POINTS, 0, allVertices.size());
+        
+        // std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         
         glfwSwapBuffers(window);
         
@@ -130,8 +104,8 @@ int main(void) {
 
     glfwTerminate();
 
-	glDeleteBuffers(1, &m_allVertexBuffer);
-	glDeleteBuffers(1, &m_allIndicesBuffer);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
 
     return 0;
 }
