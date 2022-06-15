@@ -10,7 +10,7 @@
 #include <shaders/shader.h>
 
 #define SLEEP_TIME 17
-#define AGENT_COUNT 1
+#define AGENT_COUNT 1000
 
 GLboolean pause = false;
 
@@ -193,6 +193,9 @@ int main(void) {
     GLint screenHeightComputeUniform = glGetUniformLocation(computeProgram, "screen_height");    
     GLint agentCountComputeUniform = glGetUniformLocation(computeProgram, "agent_count");    
 
+    GLint screenWidthHeatmapFragment = glGetUniformLocation(heatmapShaderProgram, "heatmap_resolution_x");
+    GLint screenHeightHeatmapFragment = glGetUniformLocation(heatmapShaderProgram, "heatmap_resolution_y");
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         
@@ -216,7 +219,7 @@ int main(void) {
         glUniform1i(screenHeightComputeUniform, SCREEN_HEIGHT);
         glUniform1i(agentCountComputeUniform, AGENT_COUNT);
         glDispatchCompute(AGENT_COUNT, 1, 1);
-        
+
         // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, agentPosSSBO);
         // glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, agentPosByteSize, agentPos);
         
@@ -240,6 +243,10 @@ int main(void) {
 
         // Render the heatmap
 		glUseProgram(heatmapShaderProgram);
+        
+        glUniform1f(screenWidthHeatmapFragment, SCREEN_WIDTH);
+        glUniform1f(screenHeightHeatmapFragment, SCREEN_HEIGHT);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_FLOAT,
                                                             generateRGBScreenHeatMap(screenHeatmap)); // Generate RGB from density
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -267,6 +274,7 @@ int main(void) {
 
     glDeleteProgram(computeProgram);
     glDeleteProgram(shaderProgram);
+    glDeleteProgram(heatmapShaderProgram);
 
     glfwTerminate();
 

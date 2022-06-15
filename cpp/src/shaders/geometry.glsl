@@ -9,7 +9,7 @@ in VS_OUT {
 
 out vec4 fColor;
 
-float size = 0.005;
+float size = 0.001;
 
 void main() {
     vec4 position = gl_in[0].gl_Position;

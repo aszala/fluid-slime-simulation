@@ -137,6 +137,5 @@ void main() {
 	// agentBuffer.agentPos[index] = mapGPUCoordToNormal(predicted.x, screen_width);
 	// agentBuffer.agentPos[index + agent_count] = screen_height - mapGPUCoordToNormal(predicted.y, screen_height);
 
-	heatmapBuffer.screenHeatmap[mapGPUCoordToNormal(predicted.x, screen_width) + screen_width * 
-								(screen_height - mapGPUCoordToNormal(predicted.y, screen_height))] = 1;
+	heatmapBuffer.screenHeatmap[mapGPUCoordToNormal(predicted.x, screen_width) + screen_width * mapGPUCoordToNormal(predicted.y, screen_height)] = 1;
 }
