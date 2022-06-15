@@ -12,12 +12,19 @@
 #define SLEEP_TIME 17
 #define AGENT_COUNT 1
 
+GLboolean pause = false;
+
 void resizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
-int main(void) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        pause = !pause;
+    }
+}
 
+int main(void) {
     // Init window
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -26,8 +33,8 @@ int main(void) {
 	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fluid Slime Simulations", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, resizeCallback);
+    glfwSetKeyCallback(window, key_callback);
 	glewInit();
-
 
     // Init Shaders
     
@@ -187,6 +194,12 @@ int main(void) {
     GLint agentCountComputeUniform = glGetUniformLocation(computeProgram, "agent_count");    
 
     while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        
+        if (pause) {
+            continue;
+        }
+
         //auto start = std::chrono::high_resolution_clock::now();
 
 		float dt = glfwGetTime();
@@ -198,6 +211,7 @@ int main(void) {
         // Run compute shader for each particle and heatmap
         glUseProgram(computeProgram);
         glUniform1f(0, dt);
+        glUniform1f(1, pause);
         glUniform1i(screenWidthComputeUniform, SCREEN_WIDTH);
         glUniform1i(screenHeightComputeUniform, SCREEN_HEIGHT);
         glUniform1i(agentCountComputeUniform, AGENT_COUNT);
@@ -244,7 +258,6 @@ int main(void) {
         glBindVertexArray(0);
         
         glfwSwapBuffers(window);
-        glfwPollEvents();
 
         // auto finish = std::chrono::high_resolution_clock::now();
         // std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() << "ms\n";
