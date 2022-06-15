@@ -10,7 +10,7 @@
 #include <shaders/shader.h>
 
 #define SLEEP_TIME 17
-#define AGENT_COUNT 1000
+#define AGENT_COUNT 100
 
 GLboolean pause = false;
 
@@ -196,6 +196,9 @@ int main(void) {
     GLint screenWidthHeatmapFragment = glGetUniformLocation(heatmapShaderProgram, "heatmap_resolution_x");
     GLint screenHeightHeatmapFragment = glGetUniformLocation(heatmapShaderProgram, "heatmap_resolution_y");
 
+    GLint screenWidthGeo = glGetUniformLocation(shaderProgram, "screen_width");
+    GLint screenHeightGeo = glGetUniformLocation(shaderProgram, "screen_height");
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         
@@ -259,6 +262,8 @@ int main(void) {
 
         // Render the particles from particle VAO
 		glUseProgram(shaderProgram);
+        glUniform1f(screenWidthGeo, SCREEN_WIDTH);
+        glUniform1f(screenHeightGeo, SCREEN_HEIGHT);
 
         glBindVertexArray(VAO);
             glDrawArrays(GL_POINTS, 0, AGENT_COUNT);
