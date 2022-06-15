@@ -7,8 +7,8 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-#define WIDTH 2
-#define HEIGHT 2
+// #define WIDTH 2
+// #define HEIGHT 2
 
 // GLfloat AGENT_SPEED = 1.0f;
 // GLfloat AGENT_WIDTH = 2.0f;
@@ -18,6 +18,10 @@
 #define HIGH_ANGLE 360.0f
 
 #define M_PI 3.14159265358979323846
+
+#define HEATMAP_R 1
+#define HEATMAP_G 1
+#define HEATMAP_B 1
 
 struct Vertex {
 	glm::vec4 position;
@@ -34,5 +38,6 @@ struct Vertex {
 GLfloat mapScreenValuesFromNormalToGPU(GLfloat number, GLfloat inMax);
 Vertex makeVertex(GLfloat x, GLfloat y, GLfloat angle);
 GLfloat generateRandomAngle();
+GLfloat* generateRGBScreenHeatMap(float* heatmap);
 
 #endif
