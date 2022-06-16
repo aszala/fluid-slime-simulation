@@ -12,7 +12,7 @@ uniform int screen_height;
 
 out vec4 fColor;
 
-float size = 2;
+float size = 0;
 
 void main() {
     vec4 position = gl_in[0].gl_Position;
@@ -20,20 +20,22 @@ void main() {
     float size_x = size / screen_width;
     float size_y = size / screen_height;
 
-    fColor = vec4(gl_Position.x, gl_Position.y, gl_Position.x, 1);
-    gl_Position = position + vec4(-size_x, -size_y, 0.0, 0.0); 
+    vec4 color = vec4(0, 0, 0, 0)
+
+    fColor = color;
+    gl_Position = position + vec4(-size, -size, 0.0, 0.0); 
     EmitVertex();
 
-    fColor = vec4(1-gl_Position.x, gl_Position.y, gl_Position.x, 1);
-    gl_Position = position + vec4(size_x, -size_y, 0.0, 0.0);
+    fColor = color;
+    gl_Position = position + vec4(size, -size, 0.0, 0.0);
     EmitVertex();
 
-    fColor = vec4(gl_Position.x, 1-gl_Position.y, gl_Position.y, 1);
-    gl_Position = position + vec4(-size_x, size_y, 0.0, 0.0);
+    fColor = color;
+    gl_Position = position + vec4(-size, size, 0.0, 0.0);
     EmitVertex();
 
-    fColor = vec4(1-gl_Position.x, 1-gl_Position.y, gl_Position.y, 1);
-    gl_Position = position + vec4(size_x, size_y, 0.0, 0.0);
+    fColor = color;
+    gl_Position = position + vec4(size, size, 0.0, 0.0);
     EmitVertex();
 
     EndPrimitive();

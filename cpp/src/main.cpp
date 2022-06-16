@@ -9,8 +9,8 @@
 #include <utils/utils.h>
 #include <shaders/shader.h>
 
-#define SLEEP_TIME 17
-#define AGENT_COUNT 100
+#define AGENT_COUNT 20000
+#define TRAIL_DECAY_RATE 0.005f
 
 GLboolean pause = false;
 
@@ -83,14 +83,22 @@ int main(void) {
 
     std::vector<Vertex> agents;
 
-    GLfloat x = SCREEN_WIDTH / 2;
-    GLfloat y = SCREEN_HEIGHT / 2;
+    GLfloat center_x = SCREEN_WIDTH / 2;
+    GLfloat center_y = SCREEN_HEIGHT / 2;
 
     for (i=0; i<AGENT_COUNT; i++) {
-        GLfloat startAngle = generateRandomAngle();
+        glm::vec2 startPos = randPointInCircle(center_x, center_y, 400);
+        GLfloat startAngle = angleToCenter(startPos.y, startPos.x, center_x, center_y);
+        // glm::vec2 startPos = glm::vec2(center_x, center_y);
+        // GLfloat startAngle = M_PI/2;
 
-        agents.push_back(makeVertex(x, y, startAngle));
+        agents.push_back(makeVertex(startPos.x, startPos.y, startAngle));
     }
+    // glm::vec2 startPos = glm::vec2(center_x, center_y);
+    // GLfloat startAngle = M_PI/2;
+
+    // agents.push_back(makeVertex(startPos.x, startPos.y - 100, startAngle));
+    // agents.push_back(makeVertex(center_x, center_y, M_PI/2));
 
 
     // Init heatmap
@@ -238,7 +246,9 @@ int main(void) {
         // Decrement heatmap density each frame
         for (i=0;i<SCREEN_WIDTH * SCREEN_HEIGHT;i++) {
             if (screenHeatmap[i] > 0) {
-                screenHeatmap[i] -= 0.01f;
+                screenHeatmap[i] -= TRAIL_DECAY_RATE;
+            } else {
+                screenHeatmap[i] = 0;
             }
         }
         

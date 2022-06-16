@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1080
+#define SCREEN_HEIGHT 1080
 // #define WIDTH 2
 // #define HEIGHT 2
 
@@ -39,5 +39,9 @@ GLfloat mapScreenValuesFromNormalToGPU(GLfloat number, GLfloat inMax);
 Vertex makeVertex(GLfloat x, GLfloat y, GLfloat angle);
 GLfloat generateRandomAngle();
 GLfloat* generateRGBScreenHeatMap(float* heatmap);
+
+GLfloat uniform();
+glm::vec2 randPointInCircle(GLfloat center_x, GLfloat center_y, GLfloat radius);
+GLfloat angleToCenter(GLfloat y, GLfloat x, GLfloat center_x, GLfloat center_y);
 
 #endif

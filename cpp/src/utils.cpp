@@ -1,5 +1,6 @@
 #include <utils/utils.h>
 #include <iostream>
+#include <math.h>
 
 GLfloat mapScreenValuesFromNormalToGPU(GLfloat number, GLfloat inMax) {
 	return ((number * 2) / inMax) - 1;
@@ -46,4 +47,19 @@ GLfloat* generateRGBScreenHeatMap(float* heatmap) {
     }
 
 	return colors;
+}
+
+GLfloat uniform() {
+	return (GLfloat)rand() / RAND_MAX;
+}
+
+glm::vec2 randPointInCircle(GLfloat center_x, GLfloat center_y, GLfloat radius) {
+	GLfloat theta = 2 * M_PI * uniform();
+	GLfloat r = sqrt(uniform());
+
+	return glm::vec2(center_x + r * radius * cos(theta), center_y + r * radius * sin(theta));
+}
+
+GLfloat angleToCenter(GLfloat y, GLfloat x, GLfloat center_x, GLfloat center_y) {
+	return -atan2(center_y - y, center_x - x);
 }

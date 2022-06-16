@@ -57,11 +57,11 @@ uniform int agent_count;
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 float M_PI = 3.14159265358979323846;
-float speed = 0.6;
+float speed = 0.5;
 
-float SENSOR_OFFSET_DISTANCE = 0.01;
-float SENSOR_SIZE = 20;
-float SENSOR_ANGLE = 45;
+float SENSOR_OFFSET_DISTANCE = 0.03;
+float SENSOR_SIZE = 5;
+float SENSOR_ANGLE = 120;
 
 uint mapGPUCoordToNormal(float coord, uint maxNorm) {
 	return uint(((coord + 1) * maxNorm) / 2);
@@ -73,8 +73,8 @@ float sense(VertexData agent, float sensorAngleOffset) {
 
 	vec2 sensorPos = agent.position.xy + sensorDir * SENSOR_OFFSET_DISTANCE;
 	uint sensorCentreX = mapGPUCoordToNormal(sensorPos.x, screen_width);
-	uint sensorCentreY = screen_height-mapGPUCoordToNormal(sensorPos.y, screen_height);
-
+	uint sensorCentreY = mapGPUCoordToNormal(sensorPos.y, screen_height);
+	
 	float sum = 0;
 
 	for (float offsetX = -SENSOR_SIZE; offsetX <= SENSOR_SIZE; offsetX++) {
@@ -89,6 +89,8 @@ float sense(VertexData agent, float sensorAngleOffset) {
 	return sum;
 }
 
+float bounds = 0.9;
+
 void main() {
 	uint index = gl_GlobalInvocationID.x;
 
@@ -98,38 +100,41 @@ void main() {
 	float randomNum = random(position.y * screen_width + position.x + random(index + in_dt * 100000));
 
 	float sensorAngleRad = SENSOR_ANGLE * (M_PI / 180);
-	// float weightForward = sense(agent, 0);
-	// float weightLeft = sense(agent, sensorAngleRad);
-	// float weightRight = sense(agent, -sensorAngleRad);
+	float weightForward = sense(agent, 0);
+	float weightLeft = sense(agent, -sensorAngleRad);
+	float weightRight = sense(agent, sensorAngleRad);
 
-	float randomSteerStrength = randomNum;
-	float turnSpeed = speed * 2 * M_PI;
+	float randomSteerStrength = randomNum / 1000000;
+	float turnSpeed = 40;
 
-	// // Continue in same direction
-	// if (weightForward > weightLeft && weightForward > weightRight) {
-	// 	outBuffer.data[index].angle.x += 0;
-	// }
-	// else if (weightForward < weightLeft && weightForward < weightRight) {
-	// 	outBuffer.data[index].angle.x += (randomSteerStrength - 0.5) * 2 * turnSpeed * in_dt;
-	// }
-	// // Turn right
-	// else if (weightRight > weightLeft) {
-	// 	outBuffer.data[index].angle.x -= randomSteerStrength * turnSpeed * in_dt;
-	// }
-	// // Turn left
-	// else if (weightLeft > weightRight) {
-	// 	outBuffer.data[index].angle.x += randomSteerStrength * turnSpeed * in_dt;
-	// }
+	// Continue in same direction
+	if (weightForward > weightLeft && weightForward > weightRight) {
+		outBuffer.data[index].angle.x += 0;
+	}
+	else if (weightForward < weightLeft && weightForward < weightRight) {
+		outBuffer.data[index].angle.x += (randomSteerStrength - 0.5) * 2 * turnSpeed * in_dt;
+	}
+	// Turn right
+	else if (weightRight > weightLeft) {
+		outBuffer.data[index].angle.x -= randomSteerStrength * turnSpeed * in_dt;
+	}
+	// Turn left
+	else if (weightLeft > weightRight) {
+		outBuffer.data[index].angle.x += randomSteerStrength * turnSpeed * in_dt;
+	}
 
 	float rotation = outBuffer.data[index].angle.x;
 
 	vec2 delta = vec2(cos(rotation), sin(rotation)) * speed * in_dt;
 	vec2 predicted = delta + position;
 
-	if (predicted.x < -1 || predicted.x > 1 || predicted.y < -1 || predicted.y > 1) {
-		predicted = vec2(min(1, max(-1, predicted.x)), min(1, max(-1, predicted.y)));
+	if (predicted.x < -bounds || predicted.x > bounds || predicted.y < -bounds || predicted.y > bounds) {
+		predicted = vec2(min(bounds, max(-bounds, predicted.x)), min(bounds, max(-bounds, predicted.y)));
 
-		outBuffer.data[index].angle.x = randomNum * M_PI * 2;
+		randomNum = random(randomNum);
+		outBuffer.data[index].angle.x += randomNum * 2 * M_PI;
+		// outBuffer.data[index].angle.x += M_PI / 2;
+		// outBuffer.data[index].angle.x *= -1;
 	}
 
 	outBuffer.data[index].position.xy = predicted;
