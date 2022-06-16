@@ -9,7 +9,7 @@ uniform sampler2D heatmap;
 
 uniform float heatmap_resolution_x;
 uniform float heatmap_resolution_y;
-uniform float blur_radius = 5;
+uniform float blur_radius = 1;
 uniform int blur_axis = 0;
 
 void main() {

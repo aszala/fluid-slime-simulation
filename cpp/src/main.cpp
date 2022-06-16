@@ -9,9 +9,9 @@
 #include <utils/utils.h>
 #include <shaders/shader.h>
 
-#define AGENT_COUNT 20000
-#define TRAIL_DECAY_RATE 0.005f
-
+#define AGENT_COUNT 500000
+#define TRAIL_DECAY_RATE 0.1f
+ 
 GLboolean pause = false;
 
 void resizeCallback(GLFWwindow* window, int width, int height) {
@@ -31,7 +31,8 @@ int main(void) {
 	glfwInit();
 
 	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fluid Slime Simulations", nullptr, nullptr);
-	glfwMakeContextCurrent(window);
+	glfwSetWindowCenter(window);
+    glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, resizeCallback);
     glfwSetKeyCallback(window, key_callback);
 	glewInit();
@@ -87,19 +88,14 @@ int main(void) {
     GLfloat center_y = SCREEN_HEIGHT / 2;
 
     for (i=0; i<AGENT_COUNT; i++) {
-        glm::vec2 startPos = randPointInCircle(center_x, center_y, 400);
-        GLfloat startAngle = angleToCenter(startPos.y, startPos.x, center_x, center_y);
-        // glm::vec2 startPos = glm::vec2(center_x, center_y);
-        // GLfloat startAngle = M_PI/2;
+        // glm::vec2 startPos = randPointInCircle(center_x, center_y, 300);
+        // GLfloat startAngle = angleToCenter(startPos.y, startPos.x, center_x, center_y);
+
+        glm::vec2 startPos = glm::vec2(center_x, center_y);
+        GLfloat startAngle = generateRandomAngle();
 
         agents.push_back(makeVertex(startPos.x, startPos.y, startAngle));
     }
-    // glm::vec2 startPos = glm::vec2(center_x, center_y);
-    // GLfloat startAngle = M_PI/2;
-
-    // agents.push_back(makeVertex(startPos.x, startPos.y - 100, startAngle));
-    // agents.push_back(makeVertex(center_x, center_y, M_PI/2));
-
 
     // Init heatmap
     float screenSizeBytes = SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(float);

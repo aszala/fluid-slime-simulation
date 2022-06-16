@@ -1,33 +1,34 @@
 #version 430
 
-uint hash(uint x) {
-    x += (x << 10u);
-    x ^= (x >>  6u);
-    x += (x <<  3u);
-    x ^= (x >> 11u);
-    x += (x << 15u);
-    return x;
+// uint hash(uint x) {
+//     x += (x << 10u);
+//     x ^= (x >>  6u);
+//     x += (x <<  3u);
+//     x ^= (x >> 11u);
+//     x += (x << 15u);
+//     return x;
+// }
+
+// uint hash(uvec2 v) { return hash(v.x ^ hash(v.y)); }
+// uint hash(uvec3 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z)); }
+// uint hash(uvec4 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w)); }
+
+// float floatConstruct(uint m) {
+//     const uint ieeeMantissa = 0x007FFFFFu;
+//     const uint ieeeOne = 0x3F800000u;
+
+//     m &= ieeeMantissa;
+//     m |= ieeeOne;
+
+//     float f = uintBitsToFloat(m);
+//     return f - 1.0;
+// }
+
+// float random(float x) { return floatConstruct(hash(floatBitsToUint(x))) / 1000000000; }
+
+float random(vec2 co){
+    return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
-
-uint hash(uvec2 v) { return hash(v.x ^ hash(v.y)); }
-uint hash(uvec3 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z)); }
-uint hash(uvec4 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w)); }
-
-float floatConstruct(uint m) {
-    const uint ieeeMantissa = 0x007FFFFFu;
-    const uint ieeeOne = 0x3F800000u;
-
-    m &= ieeeMantissa;
-    m |= ieeeOne;
-
-    float f = uintBitsToFloat(m);
-    return f - 1.0;
-}
-
-float random(float x) { return floatConstruct(hash(floatBitsToUint(x))); }
-float random(vec2 v) { return floatConstruct(hash(floatBitsToUint(v))); }
-float random(vec3 v) { return floatConstruct(hash(floatBitsToUint(v))); }
-float random(vec4 v) { return floatConstruct(hash(floatBitsToUint(v))); }
 
 struct VertexData {
 	vec4 position;
@@ -57,11 +58,11 @@ uniform int agent_count;
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 float M_PI = 3.14159265358979323846;
-float speed = 0.5;
+float speed = 0.1;
 
 float SENSOR_OFFSET_DISTANCE = 0.03;
 float SENSOR_SIZE = 5;
-float SENSOR_ANGLE = 120;
+float SENSOR_ANGLE = 90;
 
 uint mapGPUCoordToNormal(float coord, uint maxNorm) {
 	return uint(((coord + 1) * maxNorm) / 2);
@@ -89,7 +90,7 @@ float sense(VertexData agent, float sensorAngleOffset) {
 	return sum;
 }
 
-float bounds = 0.9;
+float bounds = 0.99;
 
 void main() {
 	uint index = gl_GlobalInvocationID.x;
@@ -97,15 +98,18 @@ void main() {
 	VertexData agent = outBuffer.data[index];
 	vec2 position = agent.position.xy;
 
-	float randomNum = random(position.y * screen_width + position.x + random(index + in_dt * 100000));
+	float randomNum = random(outBuffer.data[index].position.xy);
 
 	float sensorAngleRad = SENSOR_ANGLE * (M_PI / 180);
 	float weightForward = sense(agent, 0);
 	float weightLeft = sense(agent, -sensorAngleRad);
 	float weightRight = sense(agent, sensorAngleRad);
 
-	float randomSteerStrength = randomNum / 1000000;
-	float turnSpeed = 40;
+	float randomSteerStrength = randomNum;
+	float turnSpeed = 50;
+
+	// TODO: Delay sense time for 5 seconds
+
 
 	// Continue in same direction
 	if (weightForward > weightLeft && weightForward > weightRight) {
@@ -131,9 +135,9 @@ void main() {
 	if (predicted.x < -bounds || predicted.x > bounds || predicted.y < -bounds || predicted.y > bounds) {
 		predicted = vec2(min(bounds, max(-bounds, predicted.x)), min(bounds, max(-bounds, predicted.y)));
 
-		randomNum = random(randomNum);
-		outBuffer.data[index].angle.x += randomNum * 2 * M_PI;
-		// outBuffer.data[index].angle.x += M_PI / 2;
+		randomNum = random(outBuffer.data[index].position.xy);
+		// outBuffer.data[index].angle.x += randomNum * 1000 * M_PI;
+		outBuffer.data[index].angle.x += M_PI / 2;
 		// outBuffer.data[index].angle.x *= -1;
 	}
 

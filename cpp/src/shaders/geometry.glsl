@@ -20,22 +20,22 @@ void main() {
     float size_x = size / screen_width;
     float size_y = size / screen_height;
 
-    vec4 color = vec4(0, 0, 0, 0)
+    vec4 color = vec4(1, 1, 1, 1);
 
     fColor = color;
-    gl_Position = position + vec4(-size, -size, 0.0, 0.0); 
+    gl_Position = position + vec4(-size_x, -size_y, 0.0, 0.0); 
     EmitVertex();
 
     fColor = color;
-    gl_Position = position + vec4(size, -size, 0.0, 0.0);
+    gl_Position = position + vec4(size_x, -size_y, 0.0, 0.0);
     EmitVertex();
 
     fColor = color;
-    gl_Position = position + vec4(-size, size, 0.0, 0.0);
+    gl_Position = position + vec4(-size_x, size_y, 0.0, 0.0);
     EmitVertex();
 
     fColor = color;
-    gl_Position = position + vec4(size, size, 0.0, 0.0);
+    gl_Position = position + vec4(size_x, size_y, 0.0, 0.0);
     EmitVertex();
 
     EndPrimitive();

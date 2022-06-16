@@ -5,8 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
 
-#define SCREEN_WIDTH 1080
-#define SCREEN_HEIGHT 1080
+#define SCREEN_WIDTH 1380
+#define SCREEN_HEIGHT 1380
 // #define WIDTH 2
 // #define HEIGHT 2
 
@@ -43,5 +43,7 @@ GLfloat* generateRGBScreenHeatMap(float* heatmap);
 GLfloat uniform();
 glm::vec2 randPointInCircle(GLfloat center_x, GLfloat center_y, GLfloat radius);
 GLfloat angleToCenter(GLfloat y, GLfloat x, GLfloat center_x, GLfloat center_y);
+
+void glfwSetWindowCenter(GLFWwindow* window);
 
 #endif
