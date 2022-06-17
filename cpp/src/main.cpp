@@ -203,6 +203,8 @@ int main(void) {
     GLint screenWidthGeo = glGetUniformLocation(shaderProgram, "screen_width");
     GLint screenHeightGeo = glGetUniformLocation(shaderProgram, "screen_height");
 
+    float totalTimePassed = 0;
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         
@@ -213,6 +215,8 @@ int main(void) {
         //auto start = std::chrono::high_resolution_clock::now();
 
 		float dt = glfwGetTime();
+        totalTimePassed += dt;
+        std::cout << totalTimePassed << std::endl;
         glfwSetTime(0);
         
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -221,7 +225,7 @@ int main(void) {
         // Run compute shader for each particle and heatmap
         glUseProgram(computeProgram);
         glUniform1f(0, dt);
-        glUniform1f(1, pause);
+        glUniform1f(1, totalTimePassed);
         glUniform1i(screenWidthComputeUniform, SCREEN_WIDTH);
         glUniform1i(screenHeightComputeUniform, SCREEN_HEIGHT);
         glUniform1i(agentCountComputeUniform, AGENT_COUNT);

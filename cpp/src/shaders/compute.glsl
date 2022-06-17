@@ -50,6 +50,7 @@ layout(binding = 0, std430) buffer screenHeatmap {
 
 
 layout(location = 0) uniform float in_dt;
+layout(location = 1) uniform float time;
 
 uniform int screen_width;
 uniform int screen_height;
@@ -109,22 +110,22 @@ void main() {
 	float turnSpeed = 50;
 
 	// TODO: Delay sense time for 5 seconds
-
-
-	// Continue in same direction
-	if (weightForward > weightLeft && weightForward > weightRight) {
-		outBuffer.data[index].angle.x += 0;
-	}
-	else if (weightForward < weightLeft && weightForward < weightRight) {
-		outBuffer.data[index].angle.x += (randomSteerStrength - 0.5) * 2 * turnSpeed * in_dt;
-	}
-	// Turn right
-	else if (weightRight > weightLeft) {
-		outBuffer.data[index].angle.x -= randomSteerStrength * turnSpeed * in_dt;
-	}
-	// Turn left
-	else if (weightLeft > weightRight) {
-		outBuffer.data[index].angle.x += randomSteerStrength * turnSpeed * in_dt;
+	if (time > 5) {
+		// Continue in same direction
+		if (weightForward > weightLeft && weightForward > weightRight) {
+			outBuffer.data[index].angle.x += 0;
+		}
+		else if (weightForward < weightLeft && weightForward < weightRight) {
+			outBuffer.data[index].angle.x += (randomSteerStrength - 0.5) * 2 * turnSpeed * in_dt;
+		}
+		// Turn right
+		else if (weightRight > weightLeft) {
+			outBuffer.data[index].angle.x -= randomSteerStrength * turnSpeed * in_dt;
+		}
+		// Turn left
+		else if (weightLeft > weightRight) {
+			outBuffer.data[index].angle.x += randomSteerStrength * turnSpeed * in_dt;
+		}
 	}
 
 	float rotation = outBuffer.data[index].angle.x;
