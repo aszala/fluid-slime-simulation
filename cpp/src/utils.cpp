@@ -25,7 +25,7 @@ GLfloat generateRandomAngle() {
 
 GLfloat colors[(SCREEN_HEIGHT*SCREEN_WIDTH)*3];
 
-GLfloat* generateRGBScreenHeatMap(float* heatmap) {
+GLfloat* generateRGBScreenHeatMap(float* heatmap, GLfloat HEATMAP_R, GLfloat HEATMAP_G, GLfloat HEATMAP_B) {
 	unsigned int i = 0;
 
     for (unsigned int y = 0; y < SCREEN_HEIGHT; y++) {
@@ -38,9 +38,25 @@ GLfloat* generateRGBScreenHeatMap(float* heatmap) {
 			// 	std::cout << x << ", " << (SCREEN_HEIGHT-y) << std::endl;
 			// }
 
-            colors[i] = HEATMAP_R * density;
-            colors[i+1] = HEATMAP_G * density;
-            colors[i+2] = HEATMAP_B * density;
+            if (density <= 0) {
+                colors[i] = 0;
+                colors[i+1] = 0;
+                colors[i+2] = 0;
+            } else {
+                // GLfloat R;
+                // GLfloat G;
+                // GLfloat B;
+
+                // HSVtoRGB(density * 200, 99, 99, &R, &G, &B);
+
+                colors[i] = HEATMAP_R;
+                colors[i+1] = HEATMAP_G;
+                colors[i+2] = HEATMAP_B;
+                
+                // colors[i] = HEATMAP_R * density;
+                // colors[i+1] = HEATMAP_G * density;
+                // colors[i+2] = HEATMAP_B * density;
+            }
 
             i += 3;
         }
@@ -64,12 +80,44 @@ GLfloat angleToCenter(GLfloat y, GLfloat x, GLfloat center_x, GLfloat center_y) 
 	return -atan2(center_y - y, center_x - x);
 }
 
+void HSVtoRGB(GLfloat H, GLfloat S, GLfloat V, GLfloat* R, GLfloat* G, GLfloat* B) {
+    if (H > 360 || H < 0 || S > 100 || S < 0 || V > 100 || V < 0) {
+        std::cout << "The given HSV values are not in valid range" << " -- " << H << std::endl;
+        return;
+    }
+
+    GLfloat s = S / 100;
+    GLfloat v = V / 100;
+    GLfloat C = s * v;
+    GLfloat X = C * (1 - fabs(fmod(H / 60.0, 2)-1));
+    GLfloat m = v - C;
+    GLfloat r, g, b;
+
+    if (H >= 0 && H < 60) {
+        r = C, g = X, b = 0;
+    } else if (H >= 60 && H < 120) {
+        r = X, g = C, b = 0;
+    } else if (H >= 120 && H < 180) {
+        r = 0, g = C, b = X;
+    } else if (H >= 180 && H < 240) {
+        r = 0, g = X, b = C;
+    } else if (H >= 240 && H < 300) {
+        r = X, g = 0, b = C;
+    } else {
+        r = C, g = 0, b = X;
+    }
+
+    *R = (r+m);
+    *G = (g+m);
+    *B = (b+m);
+}
+
 void glfwSetWindowCenter(GLFWwindow* window) {
     // Get window position and size
-    int window_x, window_y;
+    GLint window_x, window_y;
     glfwGetWindowPos(window, &window_x, &window_y);
 
-    int window_width, window_height;
+    GLint window_width, window_height;
     glfwGetWindowSize(window, &window_width, &window_height);
 
     // Halve the window size and use it to adjust the window position to the center of the window
@@ -80,7 +128,7 @@ void glfwSetWindowCenter(GLFWwindow* window) {
     window_y += window_height;
 
     // Get the list of monitors
-    int monitors_length;
+    GLint monitors_length;
     GLFWmonitor **monitors = glfwGetMonitors(&monitors_length);
 
     if(monitors == NULL) {
@@ -90,18 +138,18 @@ void glfwSetWindowCenter(GLFWwindow* window) {
 
     // Figure out which monitor the window is in
     GLFWmonitor *owner = NULL;
-    int owner_x, owner_y, owner_width, owner_height;
+    GLint owner_x, owner_y, owner_width, owner_height;
 
-    for(int i = 0; i < monitors_length; i++) {
+    for (GLint i = 0; i < monitors_length; i++) {
         // Get the monitor position
-        int monitor_x, monitor_y;
+        GLint monitor_x, monitor_y;
         glfwGetMonitorPos(monitors[i], &monitor_x, &monitor_y);
 
         // Get the monitor size from its video mode
-        int monitor_width, monitor_height;
+        GLint monitor_width, monitor_height;
         GLFWvidmode *monitor_vidmode = (GLFWvidmode*) glfwGetVideoMode(monitors[i]);
 
-        if(monitor_vidmode == NULL) {
+        if (monitor_vidmode == NULL) {
             // Video mode is required for width and height, so skip this monitor
             continue;
 
@@ -122,7 +170,7 @@ void glfwSetWindowCenter(GLFWwindow* window) {
         }
     }
 
-    if(owner != NULL) {
+    if (owner != NULL) {
         // Set the window position to the center of the owner monitor
         glfwSetWindowPos(window, owner_x + (owner_width * 0.5) - window_width, owner_y + (owner_height * 0.5) - window_height);
     }

@@ -61,9 +61,9 @@ layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 float M_PI = 3.14159265358979323846;
 float speed = 0.1;
 
-float SENSOR_OFFSET_DISTANCE = 0.03;
-float SENSOR_SIZE = 5;
-float SENSOR_ANGLE = 90;
+float SENSOR_OFFSET_DISTANCE = 0.01;
+float SENSOR_SIZE = 3;
+float SENSOR_ANGLE = 35;
 
 uint mapGPUCoordToNormal(float coord, uint maxNorm) {
 	return uint(((coord + 1) * maxNorm) / 2);
@@ -91,7 +91,7 @@ float sense(VertexData agent, float sensorAngleOffset) {
 	return sum;
 }
 
-float bounds = 0.99;
+float bounds = 0.95;
 
 void main() {
 	uint index = gl_GlobalInvocationID.x;
@@ -103,8 +103,8 @@ void main() {
 
 	float sensorAngleRad = SENSOR_ANGLE * (M_PI / 180);
 	float weightForward = sense(agent, 0);
-	float weightLeft = sense(agent, -sensorAngleRad);
-	float weightRight = sense(agent, sensorAngleRad);
+	float weightLeft = sense(agent, sensorAngleRad);
+	float weightRight = sense(agent, -sensorAngleRad);
 
 	float randomSteerStrength = randomNum;
 	float turnSpeed = 50;

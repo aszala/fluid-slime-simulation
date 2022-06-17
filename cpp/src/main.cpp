@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <math.h>
 
 #include <utils/utils.h>
 #include <shaders/shader.h>
@@ -216,7 +217,7 @@ int main(void) {
 
 		float dt = glfwGetTime();
         totalTimePassed += dt;
-        std::cout << totalTimePassed << std::endl;
+        // std::cout << totalTimePassed << std::endl;
         glfwSetTime(0);
         
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -245,7 +246,7 @@ int main(void) {
         
         // Decrement heatmap density each frame
         for (i=0;i<SCREEN_WIDTH * SCREEN_HEIGHT;i++) {
-            if (screenHeatmap[i] > 0) {
+            if (screenHeatmap[i] > 0.2) {
                 screenHeatmap[i] -= TRAIL_DECAY_RATE;
             } else {
                 screenHeatmap[i] = 0;
@@ -260,8 +261,14 @@ int main(void) {
         glUniform1f(screenWidthHeatmapFragment, SCREEN_WIDTH);
         glUniform1f(screenHeightHeatmapFragment, SCREEN_HEIGHT);
 
+        GLfloat R;
+        GLfloat G;
+        GLfloat B;
+
+        HSVtoRGB(360 * fmod(totalTimePassed, 15) / 15, 99, 99, &R, &G, &B);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_FLOAT,
-                                                            generateRGBScreenHeatMap(screenHeatmap)); // Generate RGB from density
+                                                            generateRGBScreenHeatMap(screenHeatmap, R, G, B)); // Generate RGB from density
         glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture);
 
