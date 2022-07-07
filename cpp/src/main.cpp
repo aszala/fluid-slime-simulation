@@ -10,8 +10,8 @@
 #include <utils/utils.h>
 #include <shaders/shader.h>
 
-#define AGENT_COUNT 500000
-#define TRAIL_DECAY_RATE 0.1f
+#define AGENT_COUNT 100000
+#define TRAIL_DECAY_RATE 0.01f
  
 GLboolean pause = false;
 
@@ -89,11 +89,11 @@ int main(void) {
     GLfloat center_y = SCREEN_HEIGHT / 2;
 
     for (i=0; i<AGENT_COUNT; i++) {
-        // glm::vec2 startPos = randPointInCircle(center_x, center_y, 300);
-        // GLfloat startAngle = angleToCenter(startPos.y, startPos.x, center_x, center_y);
+        glm::vec2 startPos = randPointInCircle(center_x, center_y, 300);
+        GLfloat startAngle = angleToCenter(startPos.y, startPos.x, center_x, center_y);
 
-        glm::vec2 startPos = glm::vec2(center_x, center_y);
-        GLfloat startAngle = generateRandomAngle();
+        // glm::vec2 startPos = glm::vec2(center_x, center_y);
+        // GLfloat startAngle = generateRandomAngle();
 
         agents.push_back(makeVertex(startPos.x, startPos.y, startAngle));
     }
@@ -246,11 +246,7 @@ int main(void) {
         
         // Decrement heatmap density each frame
         for (i=0;i<SCREEN_WIDTH * SCREEN_HEIGHT;i++) {
-            if (screenHeatmap[i] > 0.2) {
-                screenHeatmap[i] -= TRAIL_DECAY_RATE;
-            } else {
-                screenHeatmap[i] = 0;
-            }
+            screenHeatmap[i] -= TRAIL_DECAY_RATE;
         }
         
         glBufferData(GL_SHADER_STORAGE_BUFFER, screenSizeBytes, &screenHeatmap[0], GL_STREAM_COPY);

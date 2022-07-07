@@ -59,11 +59,12 @@ uniform int agent_count;
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 float M_PI = 3.14159265358979323846;
-float speed = 0.1;
+float speed = 0.01;
+float turnSpeed = 10;
 
 float SENSOR_OFFSET_DISTANCE = 0.01;
-float SENSOR_SIZE = 3;
-float SENSOR_ANGLE = 35;
+float SENSOR_SIZE = 5;
+float SENSOR_ANGLE = 45;
 
 uint mapGPUCoordToNormal(float coord, uint maxNorm) {
 	return uint(((coord + 1) * maxNorm) / 2);
@@ -106,11 +107,9 @@ void main() {
 	float weightLeft = sense(agent, sensorAngleRad);
 	float weightRight = sense(agent, -sensorAngleRad);
 
-	float randomSteerStrength = randomNum;
-	float turnSpeed = 50;
+	float randomSteerStrength = randomNum * 2;
 
-	// TODO: Delay sense time for 5 seconds
-	if (time > 5) {
+	if (time > 0) {
 		// Continue in same direction
 		if (weightForward > weightLeft && weightForward > weightRight) {
 			outBuffer.data[index].angle.x += 0;

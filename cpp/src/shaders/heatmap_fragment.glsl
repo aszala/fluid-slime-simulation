@@ -9,26 +9,30 @@ uniform sampler2D heatmap;
 
 uniform float heatmap_resolution_x;
 uniform float heatmap_resolution_y;
-uniform float blur_radius = 1;
+uniform float blur_radius = 5;
 uniform int blur_axis = 0;
 
 void main() {
-    // FragColor = texture(heatmap, TexCoord);
+    FragColor = texture(heatmap, TexCoord);
 
-    float x, y, rr = blur_radius*blur_radius, d, w, w0;
+    // float x, y, rr = blur_radius*blur_radius, d, w, w0;
     
-    vec2 p = TexCoord;
-    vec4 col = vec4(0.0, 0.0, 0.0, 0.0);
+    // vec2 p = TexCoord;
+    // vec4 col = vec4(0.0, 0.0, 0.0, 0.0);
 
-    w0 = 0.5135 / pow(blur_radius, 0.96);
+    // w0 = 0.5135 / pow(blur_radius, 0.96);
 
-    // if (blur_axis==0) {
-    for (d=1.0/heatmap_resolution_x, x=-blur_radius, p.x+=x*d; x<=blur_radius; x++, p.x+=d) {
-        w = w0 * exp((-x*x) / (2.0 * rr));
-        col += texture2D(heatmap, p) * w;
-    }
+    // // if (blur_axis==0) {
+    // for (d=1.0/heatmap_resolution_x, x=-blur_radius, p.x+=x*d; x<=blur_radius; x++, p.x+=d) {
+    //     w = w0 * exp((-x*x) / (2.0 * rr));
+    //     col += texture2D(heatmap, p) * w;
     // }
-    // if (blur_axis==1) for (d=1.0/ys,y=-r,p.y+=y*d;y<=r;y++,p.y+=d){ w=w0*exp((-y*y)/(2.0*rr)); col+=texture2D(txr,p)*w; }
+    // }
+    // if (blur_axis==1)
+    // for (d=1.0/heatmap_resolution_y, y=-blur_radius, p.y+=y*d; y<=blur_radius; y++, p.y+=d) {
+    //     w = w0 * exp((-y*y) / (2.0 * rr));
+    //     col += texture2D(heatmap, p) * w;
+    // }
     
-    FragColor = col;
+    // FragColor = col;
 }
