@@ -1,31 +1,5 @@
 #version 430
 
-// uint hash(uint x) {
-//     x += (x << 10u);
-//     x ^= (x >>  6u);
-//     x += (x <<  3u);
-//     x ^= (x >> 11u);
-//     x += (x << 15u);
-//     return x;
-// }
-
-// uint hash(uvec2 v) { return hash(v.x ^ hash(v.y)); }
-// uint hash(uvec3 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z)); }
-// uint hash(uvec4 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w)); }
-
-// float floatConstruct(uint m) {
-//     const uint ieeeMantissa = 0x007FFFFFu;
-//     const uint ieeeOne = 0x3F800000u;
-
-//     m &= ieeeMantissa;
-//     m |= ieeeOne;
-
-//     float f = uintBitsToFloat(m);
-//     return f - 1.0;
-// }
-
-// float random(float x) { return floatConstruct(hash(floatBitsToUint(x))) / 1000000000; }
-
 float random(vec2 co){
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
 }
@@ -39,10 +13,6 @@ struct VertexData {
 layout(binding = 3, std430) buffer block {
 	VertexData data[];
 } outBuffer;
-
-// layout(binding = 0, std430) buffer agent {
-// 	float agentPos[];
-// } agentBuffer;
 
 layout(binding = 0, std430) buffer screenHeatmap {
 	float screenHeatmap[];
@@ -136,15 +106,10 @@ void main() {
 		predicted = vec2(min(bounds, max(-bounds, predicted.x)), min(bounds, max(-bounds, predicted.y)));
 
 		randomNum = random(outBuffer.data[index].position.xy);
-		// outBuffer.data[index].angle.x += randomNum * 1000 * M_PI;
 		outBuffer.data[index].angle.x += M_PI / 2;
-		// outBuffer.data[index].angle.x *= -1;
 	}
 
 	outBuffer.data[index].position.xy = predicted;
-
-	// agentBuffer.agentPos[index] = mapGPUCoordToNormal(predicted.x, screen_width);
-	// agentBuffer.agentPos[index + agent_count] = screen_height - mapGPUCoordToNormal(predicted.y, screen_height);
 
 	heatmapBuffer.screenHeatmap[mapGPUCoordToNormal(predicted.x, screen_width) + screen_width * mapGPUCoordToNormal(predicted.y, screen_height)] = 1;
 }

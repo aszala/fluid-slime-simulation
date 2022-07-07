@@ -134,17 +134,6 @@ int main(void) {
     glBufferData(GL_SHADER_STORAGE_BUFFER, screenSizeBytes, &screenHeatmap[0], GL_STREAM_COPY);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, screenMapSSBO);
 
-    // float agentPosByteSize = AGENT_COUNT * 2 * sizeof(float);
-
-    // float agentPos[AGENT_COUNT * 2];
-    
-    // unsigned int agentPosSSBO;
-    // glGenBuffers(1, &agentPosSSBO);
-    // glBindBuffer(GL_SHADER_STORAGE_BUFFER, agentPosSSBO);
-    // glBufferData(GL_SHADER_STORAGE_BUFFER, agentPosByteSize, &agentPos[0], GL_STREAM_COPY);
-    // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, agentPosSSBO);
-    
-
     // Define the heatmap mapping
     float heatmapVertices[] = {
         // positions          // colors           // texture coords
@@ -187,12 +176,6 @@ int main(void) {
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    // glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // // Texture parameters
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
 
     GLint screenWidthComputeUniform = glGetUniformLocation(computeProgram, "screen_width");
     GLint screenHeightComputeUniform = glGetUniformLocation(computeProgram, "screen_height");    
@@ -213,17 +196,14 @@ int main(void) {
             continue;
         }
 
-        //auto start = std::chrono::high_resolution_clock::now();
-
 		float dt = glfwGetTime();
         totalTimePassed += dt;
-        // std::cout << totalTimePassed << std::endl;
+
         glfwSetTime(0);
         
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(0.0, 0.0, 0.0, 0.0);
 
-        // Run compute shader for each particle and heatmap
         glUseProgram(computeProgram);
         glUniform1f(0, dt);
         glUniform1f(1, totalTimePassed);
@@ -231,14 +211,6 @@ int main(void) {
         glUniform1i(screenHeightComputeUniform, SCREEN_HEIGHT);
         glUniform1i(agentCountComputeUniform, AGENT_COUNT);
         glDispatchCompute(AGENT_COUNT, 1, 1);
-
-        // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, agentPosSSBO);
-        // glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, agentPosByteSize, agentPos);
-        
-        // for (i=0;i<AGENT_COUNT;i++) {
-        //     std::cout << agentPos[i] << " , " << agentPos[i + AGENT_COUNT] << std::endl;
-        //     std::cout << "----" << std::endl;
-        // }
 
         // Extract heatmap data back from compute shader
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, screenMapSSBO);
@@ -283,9 +255,6 @@ int main(void) {
         glBindVertexArray(0);
         
         glfwSwapBuffers(window);
-
-        // auto finish = std::chrono::high_resolution_clock::now();
-        // std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() << "ms\n";
     }
 
     delete screenHeatmap;
@@ -298,7 +267,6 @@ int main(void) {
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-
 
     return 0;
 }

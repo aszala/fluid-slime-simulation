@@ -31,12 +31,7 @@ GLfloat* generateRGBScreenHeatMap(float* heatmap, GLfloat HEATMAP_R, GLfloat HEA
     for (unsigned int y = 0; y < SCREEN_HEIGHT; y++) {
         for (unsigned int x = 0; x < SCREEN_WIDTH; x++) {
 
-			// float density = heatmap[x + SCREEN_WIDTH * (SCREEN_HEIGHT-y)];
 			float density = heatmap[x + SCREEN_WIDTH * y];
-
-			// if (density >= 0.99) {
-			// 	std::cout << x << ", " << (SCREEN_HEIGHT-y) << std::endl;
-			// }
 
             if (density <= 0) {
                 colors[i] = 0;

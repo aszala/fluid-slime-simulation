@@ -7,12 +7,6 @@
 
 #define SCREEN_WIDTH 1380
 #define SCREEN_HEIGHT 1380
-// #define WIDTH 2
-// #define HEIGHT 2
-
-// GLfloat AGENT_SPEED = 1.0f;
-// GLfloat AGENT_WIDTH = 2.0f;
-// GLfloat SENSOR_ANGLE = -0.785398; // -45 as radian
 
 #define LOW_ANGLE 0.0f
 #define HIGH_ANGLE 360.0f
