@@ -1,18 +1,33 @@
+# Particle Engine for Emulating Slime Mold Behavior
+Inspired by [this video](https://www.youtube.com/watch?v=X-iSQQgOd1A)
+
+Will generate a stream of particles that will interact with each other to create naturally occuring patterns.
+
+Behavior of the particles can be tuned by modifying the sensing parameters and other things like speed and trail length.
+
+Sample from C++ build
+![sample](cpp/images/1.png)
+
+Note: The Java version is significatly less developed due to performance issues at scale.
+
 ## Getting Started
+First `cd` into the folder you want to test.
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+### C++/OpenGL
+Note: This was only tested with the `g++` compiler and on Windows.
 
-## Folder Structure
+Download external opengl library files packaged [here](https://drive.google.com/file/d/1o-iBxV4G21DgOM9j0POSwd5c7WJuBV6C/view?usp=sharing) and extract them into the `cpp` folder.
 
-The workspace contains two folders by default, where:
+```sh
+g++ -g -std=c++17 -IC:include -LC:lib src/*.cpp -lglfw3dll -lopengl32 -lglew32 -o app.exe
+```
+```sh
+app.exe
+```
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+### Java
+Ensured you have Java installed on your system. This code was developed and tested with OpenJDK version 16.0.1
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+```
+java -cp ./bin main.Main
+```
